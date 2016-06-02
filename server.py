@@ -1,15 +1,16 @@
 from tornado.web import RequestHandler, Application
 from tornado.ioloop import IOLoop
 
-#GPIO Setup
 import RPi.GPIO as GPIO
-GPIO.setmode(GPIO.BOARD)
-#Setup pin 3 as GPIO out to control relay module
-GPIO.setup(3,GPIO.OUT)
 
 #define main loop
 def main():
     try:
+        #GPIO Setup
+        GPIO.setmode(GPIO.BOARD)
+        #Setup pin 3 as GPIO out to control relay module
+        GPIO.setup(3, GPIO.OUT)
+
         #Defining routes that can be accessed and their handlers
         rutas = [('/', ListHandler),('/onoff',OnOff)]
         app = Application(rutas, debug=False)
@@ -20,6 +21,9 @@ def main():
 
     except KeyboardInterrupt:
         exit()
+
+    finally:
+        GPIO.cleanup()
 
 class ListHandler(RequestHandler):
     def get(self):
