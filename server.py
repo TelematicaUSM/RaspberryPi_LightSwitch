@@ -16,7 +16,7 @@ def main():
         #app will listen on port 80
         app.listen(80)
         #Starting the server
-        IOLoop.instance().start()
+        IOLoop.current().start()
 
     except KeyboardInterrupt:
         exit()
