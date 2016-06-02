@@ -1,21 +1,18 @@
-from tornado.web import RequestHandler, Application
 from tornado.ioloop import IOLoop
+from tornado.web import RequestHandler, Application
 
-#GPIO Setup
 import RPi.GPIO as GPIO
-GPIO.setmode(GPIO.BOARD)
-#Setup pin 3 as GPIO out to control relay module
-GPIO.setup(3,GPIO.OUT)
 
-#define main loop
+
 def main():
+    """Execute the application."""
     try:
-        #Defining routes that can be accessed and their handlers
-        rutas = [('/', ListHandler),('/onoff',OnOff)]
-        app = Application(rutas, debug=False)
-        #app will listen on port 80
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setup(3, GPIO.OUT)
+
+        routes = [('/', ListHandler), ('/onoff', OnOff)]
+        app = Application(routes, debug=False)
         app.listen(80)
-        #Starting the server
         IOLoop.instance().start()
 
     except KeyboardInterrupt:
@@ -23,19 +20,21 @@ def main():
 
 class ListHandler(RequestHandler):
     def get(self):
-        #Renders the luz.html file
+        """Render the luz.html file."""
         self.render('luz.html')
 
     def post(self):
-        #On post, change the pin 3 state and reload the page
-        GPIO.output(3,not GPIO.input(3))
+        """Change the pin 3 state and reload the page."""
+        GPIO.output(3, not GPIO.input(3))
         self.get()
 
+
 class OnOff(RequestHandler):
-    #This class allows the users to have a direct access to the relay.
-    #It shows an empty page but changes the relay state
+    """Allows the user to have a direct access to the relay."""
+
     def get(self):
-        GPIO.output(3,not GPIO.input(3))
+        """Show an empty page but changes the relay state."""
+        GPIO.output(3, not GPIO.input(3))
         self.write('')
 
 if __name__ == "__main__":
